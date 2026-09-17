@@ -1,5 +1,7 @@
 # Data Mining Rule-Classification Pipeline
 
+[![Tests](https://github.com/AT-365/data-mining-rule-classification-pipeline/actions/workflows/tests.yml/badge.svg)](https://github.com/AT-365/data-mining-rule-classification-pipeline/actions/workflows/tests.yml)
+
 An end-to-end Python data-mining project that transforms raw tabular data into an evaluated, interpretable association-rule classifier. The repository now includes the complete portfolio-ready pipeline in [`data_mining_pipeline.py`](data_mining_pipeline.py).
 
 ## Why this project matters
@@ -53,6 +55,7 @@ The model was conservative: every positive prediction was correct in the held-ou
 | [`data_mining_pipeline.py`](data_mining_pipeline.py) | Complete executable analysis pipeline |
 | [`requirements.txt`](requirements.txt) | Python dependencies |
 | [`DATASET.md`](DATASET.md) | Input schema and dataset availability |
+| [`tests/test_pipeline.py`](tests/test_pipeline.py) | Synthetic unit tests for core calculations and validation |
 | [`docs/PUBLICATION_NOTES.md`](docs/PUBLICATION_NOTES.md) | Public-release boundaries |
 
 ## Run locally
@@ -76,6 +79,16 @@ python data_mining_pipeline.py \
 ```
 
 The original course dataset is not distributed. See [`DATASET.md`](DATASET.md) for the required input schema.
+
+## Automated tests
+
+The public test suite uses small synthetic inputs rather than the protected course dataset. It checks input validation, entropy, Apriori support counting, invalid itemset detection, and confusion-matrix metrics.
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+GitHub Actions runs the same tests automatically after each push and pull request.
 
 ## Technologies and methods
 
