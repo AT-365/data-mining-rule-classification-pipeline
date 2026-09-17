@@ -1,22 +1,19 @@
 # Publication Notes
 
-This repository is deliberately limited to recruiter-facing documentation.
+This repository is a recruiter-facing portfolio presentation of completed graduate coursework.
 
 ## Included
 
-- High-level workflow
-- Verified aggregate results
-- Technical methods and tools
-- Honest interpretation and proposed next steps
+- Complete Python analysis pipeline
+- Portable command-line file handling and input validation
+- High-level workflow and verified aggregate results
+- Technical methods, tools, and honest model interpretation
 
 ## Withheld
 
 - Professor-provided assignment specification
 - Course dataset and row-level data
 - Submitted report and defense materials
-- Complete source code and generated answer files
-- Tests or artifacts that could function as an answer key
+- Generated answer files that could expose source data or function as an answer key
 
-The course required individual work and prohibited AI-assisted drafting of submitted assignments. The underlying academic work was completed and defended by Autenia Murray. The public portfolio documentation was prepared after the course to describe the project without modifying or republishing the submitted work.
-
-Source code should be added publicly only after confirming that doing so does not violate university, instructor, dataset, or academic-integrity requirements.
+The underlying academic work was completed and defended by Autenia Murray. The public-release changes are limited to portfolio documentation, input validation, and portable file handling; they do not alter the analytical method or reported results.
