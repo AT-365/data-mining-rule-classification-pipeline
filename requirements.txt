@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 pandas
 openpyxl
 python-docx
 reportlab
+=======
+numpy>=1.24
+pandas>=2.0
+>>>>>>> parent of 4508527 (Add files via upload)
