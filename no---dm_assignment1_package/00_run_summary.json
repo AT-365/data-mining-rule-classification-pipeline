@@ -1,0 +1,37 @@
+{
+  "raw_record_count":414,
+  "clean_record_count":309,
+  "removed_record_count":105,
+  "thresholds":{
+    "debt":14.8,
+    "lopen":155.9,
+    "lrer":110.7,
+    "bndvol":1.7,
+    "gdpgvol":4.6,
+    "pivol":0.6,
+    "spreadvol":0.1
+  },
+  "econ_train_size":277,
+  "econ_test_size":32,
+  "support_count_used":17,
+  "surviving_format1_treat_rules":8,
+  "metrics":{
+    "TP (X)":4,
+    "FN (Y)":14,
+    "FP (Z)":0,
+    "TN (W)":14,
+    "Accuracy":0.5625,
+    "Recall":0.2222222222,
+    "Precision":1.0,
+    "Accuracy Formula":"(4 + 14) \/ (4 + 14 + 0 + 14)",
+    "Recall Formula":"4 \/ (4 + 14)",
+    "Precision Formula":"4 \/ (4 + 0)"
+  },
+  "balance":{
+    "Econ-TRAIN treat = 1 Count":154,
+    "Econ-TRAIN treat = 0 Count":123,
+    "IR":0.1119133574,
+    "Dataset Status":"Balanced",
+    "Rule Score Used":"Confidence"
+  }
+}

@@ -1,0 +1,3 @@
+treat,Discretized Class Count,10% Raw Value,Sampling Rule,Econ-TEST Sample Count
+0,137,13.700000000000001,Round up to guarantee at least 10% from each class,14
+1,172,17.2,Round up to guarantee at least 10% from each class,18

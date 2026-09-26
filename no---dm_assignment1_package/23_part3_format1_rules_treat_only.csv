@@ -1,0 +1,9 @@
+Frequent Itemset,Antecedent,Consequent,Confidence,Format-1,Format-2
+"I11, I2, I6","I11, I6",I2,1.0,lopen = 2 ∧ gdpgvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ gdpgvol [0.2-4.6) => treat 1 (confidence = 100.00%)
+"I11, I2, I6, I7","I11, I6, I7",I2,1.0,lopen = 2 ∧ lrer = 1 ∧ gdpgvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ lrer [77.2-110.7) ∧ gdpgvol [0.2-4.6) => treat 1 (confidence = 100.00%)
+"I11, I2, I6, I7, I9","I11, I6, I7, I9",I2,1.0,lopen = 2 ∧ lrer = 1 ∧ bndvol = 1 ∧ gdpgvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ lrer [77.2-110.7) ∧ bndvol [0.0-1.7) ∧ gdpgvol [0.2-4.6) => treat 1 (confidence = 100.00%)
+"I11, I2, I6, I9","I11, I6, I9",I2,1.0,lopen = 2 ∧ bndvol = 1 ∧ gdpgvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ bndvol [0.0-1.7) ∧ gdpgvol [0.2-4.6) => treat 1 (confidence = 100.00%)
+"I2, I6",I6,I2,1.0,lopen = 2 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] => treat 1 (confidence = 100.00%)
+"I2, I6, I7","I6, I7",I2,1.0,lopen = 2 ∧ lrer = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ lrer [77.2-110.7) => treat 1 (confidence = 100.00%)
+"I2, I6, I7, I9","I6, I7, I9",I2,1.0,lopen = 2 ∧ lrer = 1 ∧ bndvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ lrer [77.2-110.7) ∧ bndvol [0.0-1.7) => treat 1 (confidence = 100.00%)
+"I2, I6, I9","I6, I9",I2,1.0,lopen = 2 ∧ bndvol = 1 => treat = 1 (confidence = 100.00%),lopen [155.9-175.1] ∧ bndvol [0.0-1.7) => treat 1 (confidence = 100.00%)

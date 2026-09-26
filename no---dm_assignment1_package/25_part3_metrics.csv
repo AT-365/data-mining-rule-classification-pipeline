@@ -1,0 +1,2 @@
+TP (X),FN (Y),FP (Z),TN (W),Accuracy,Recall,Precision,Accuracy Formula,Recall Formula,Precision Formula
+4,14,0,14,0.5625,0.2222222222222222,1.0,(4 + 14) / (4 + 14 + 0 + 14),4 / (4 + 14),4 / (4 + 0)
