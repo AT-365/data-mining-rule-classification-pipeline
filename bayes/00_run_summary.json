@@ -1,0 +1,10 @@
+{
+  "Classifier":"Naive Bayes",
+  "Training Records":365,
+  "Test Records":44,
+  "Categorical Attributes":"Venue, color, Model, Category, Location, Variety",
+  "Continuous Attributes":"Weight, Material",
+  "Smoothing Used":"Yes",
+  "Final Accuracy Percent":45.4545454545,
+  "Run Completed At":"2026-05-08 23:55:52"
+}

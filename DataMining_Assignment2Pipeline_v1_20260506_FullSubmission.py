@@ -3,13 +3,35 @@ from __future__ import annotations
 import copy
 import json
 import math
+import sys
 from collections import Counter
 from datetime import datetime
 from html import escape
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple
 
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
+try:
+    import openpyxl  # noqa: F401
+except ImportError:
+    openpyxl = None
+
+try:
+    import docx  # noqa: F401
+except ImportError:
+    docx = None
+
+try:
+    import reportlab  # noqa: F401
+except ImportError:
+    reportlab = None
+
+if TYPE_CHECKING:
+    from pandas import DataFrame, Series
 
 
 CONFIG = {
@@ -17,6 +39,7 @@ CONFIG = {
     "data_dir": "data",
     "outputs_dir": "outputs",
     "reports_dir": "reports",
+    "private_notes_dir": "private_defense_notes",
     "id3_train_csv": "A2--ID3-Training set.csv",
     "id3_test_csv": "A2--ID3-TEST set.csv",
     "bayes_train_csv": "A2--Bayes-Training set.csv",
@@ -26,6 +49,53 @@ CONFIG = {
     "show_live_section_output_default": True,
     "pdf_line_width": 96,
 }
+
+SESSION_FLAGS = {
+    "show_live_terminal_output": CONFIG["show_live_section_output_default"],
+}
+
+
+def validate_runtime_environment() -> None:
+    """Stop early with a clear message when Python or packages are missing."""
+    if sys.version_info < (3, 10):
+        raise RuntimeError(
+            "Python 3.10 or newer is required. "
+            f"Current version: {sys.version.split()[0]}"
+        )
+
+    missing_packages = []
+    if pd is None:
+        missing_packages.append("pandas")
+    if openpyxl is None:
+        missing_packages.append("openpyxl")
+    if docx is None:
+        missing_packages.append("python-docx")
+    if reportlab is None:
+        missing_packages.append("reportlab")
+
+    if missing_packages:
+        raise ImportError(
+            "Missing required packages: "
+            + ", ".join(missing_packages)
+            + ". Install them with: python -m pip install -r requirements.txt"
+        )
+
+
+def validate_project_files(base_dir: Path) -> None:
+    """Confirm the expected assignment data files are present before prompting."""
+    data_dir = base_dir / CONFIG["data_dir"]
+    required_files = [
+        CONFIG["id3_train_csv"],
+        CONFIG["id3_test_csv"],
+        CONFIG["bayes_train_csv"],
+        CONFIG["bayes_test_csv"],
+    ]
+
+    missing_files = [str(data_dir / file_name) for file_name in required_files if not (data_dir / file_name).exists()]
+    if missing_files:
+        raise FileNotFoundError(
+            "Missing required data files: " + ", ".join(missing_files)
+        )
 
 
 def explain_function_purpose() -> Dict[str, str]:
@@ -62,9 +132,20 @@ def live_print(enabled: bool, message: str = "") -> None:
         print(message, flush=True)
 
 
+def should_print_saved_file(file_path: Path) -> bool:
+    """Return whether saved-file messages should be printed to the terminal."""
+    return SESSION_FLAGS["show_live_terminal_output"]
+
+
 def print_saved_file(file_path: Path) -> None:
     """Print the saved file path immediately so the VS Code terminal shows progress."""
-    print(f"Saved: {file_path}", flush=True)
+    if not should_print_saved_file(file_path):
+        return
+    try:
+        display_path = file_path.resolve().relative_to(CONFIG["base_dir"])
+    except ValueError:
+        display_path = file_path
+    print(f"Saved: {display_path}", flush=True)
 
 
 def get_yes_no_input(prompt_text: str, default_value: bool = True) -> bool:
@@ -116,29 +197,87 @@ def get_decimal_input(prompt_text: str, lower_bound: float, upper_bound: float, 
         print(f"Invalid entry. Valid range: {lower_bound} < value {upper_symbol} {upper_bound}.\n", flush=True)
 
 
+def collect_startup_inputs() -> Tuple[str, bool, Dict[str, Any]]:
+    """Collect every required user input before the pipeline starts processing files."""
+    classifier_choice = get_classifier_choice()
+    live_output = True
+    print("Live terminal progress output is enabled automatically.", flush=True)
+
+    user_inputs: Dict[str, Any] = {
+        "Classifier Choice": "ID3" if classifier_choice == "id3" else "Naive Bayes",
+        "Live Terminal Output": "Yes" if live_output else "No",
+    }
+
+    if classifier_choice == "id3":
+        t1_threshold = get_decimal_input(
+            "Enter the pre-pruning threshold T1. T1 controls when ID3 stops splitting early using alpha = c1 / |F1|. Enter T1 (0 < T1 <= 1): ",
+            0,
+            1,
+        )
+        g_parameter = get_decimal_input(
+            "Enter the post-pruning parameter g. Valid range: 0 < g <= 0.015. Enter g: ",
+            0,
+            0.015,
+        )
+        user_inputs["T1 Threshold"] = t1_threshold
+        user_inputs["g Parameter"] = g_parameter
+
+    return classifier_choice, live_output, user_inputs
+
+
 def create_assignment_folders(base_dir: Path) -> Dict[str, Path]:
     """Create the folders used by the VS Code project and return their paths."""
     data_dir = base_dir / CONFIG["data_dir"]
     outputs_dir = base_dir / CONFIG["outputs_dir"]
     reports_dir = base_dir / CONFIG["reports_dir"]
-    notebooks_dir = base_dir / "notebooks"
+    private_notes_dir = base_dir / CONFIG["private_notes_dir"]
 
-    for folder in [data_dir, outputs_dir, reports_dir, notebooks_dir, outputs_dir / "id3", outputs_dir / "bayes", reports_dir / "id3", reports_dir / "bayes"]:
+    for folder in [
+        data_dir,
+        outputs_dir,
+        reports_dir,
+        private_notes_dir,
+        outputs_dir / "id3",
+        outputs_dir / "bayes",
+        reports_dir / "id3",
+        reports_dir / "bayes",
+        private_notes_dir / "id3",
+        private_notes_dir / "bayes",
+    ]:
         folder.mkdir(parents=True, exist_ok=True)
 
     return {
         "data": data_dir,
         "outputs": outputs_dir,
         "reports": reports_dir,
-        "notebooks": notebooks_dir,
+        "private_notes": private_notes_dir,
         "id3_outputs": outputs_dir / "id3",
         "bayes_outputs": outputs_dir / "bayes",
         "id3_reports": reports_dir / "id3",
         "bayes_reports": reports_dir / "bayes",
+        "id3_private_notes": private_notes_dir / "id3",
+        "bayes_private_notes": private_notes_dir / "bayes",
     }
 
 
-def save_excel_output(file_path: Path, payload: pd.DataFrame | Dict[str, pd.DataFrame]) -> None:
+def print_dataframe_output(title: str, dataframe: DataFrame) -> None:
+    """Print one DataFrame to the terminal so results are visible without opening Excel."""
+    if not SESSION_FLAGS["show_live_terminal_output"]:
+        return
+    print(f"\n--- {title} ---", flush=True)
+    if dataframe.empty:
+        print("[No rows]", flush=True)
+        return
+    with pd.option_context(
+        "display.max_rows", None,
+        "display.max_columns", None,
+        "display.width", None,
+        "display.max_colwidth", None,
+    ):
+        print(dataframe.to_string(index=False), flush=True)
+
+
+def save_excel_output(file_path: Path, payload: DataFrame | Dict[str, DataFrame]) -> None:
     """Save one DataFrame or several named sheets to an Excel workbook."""
     if isinstance(payload, dict):
         with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
@@ -148,6 +287,11 @@ def save_excel_output(file_path: Path, payload: pd.DataFrame | Dict[str, pd.Data
     else:
         payload.to_excel(file_path, index=False)
     print_saved_file(file_path)
+    if isinstance(payload, dict):
+        for sheet_name, dataframe in payload.items():
+            print_dataframe_output(f"{file_path.name} [{sheet_name}]", dataframe)
+    else:
+        print_dataframe_output(file_path.name, payload)
 
 
 def save_text_output(file_path: Path, text: str) -> None:
@@ -156,7 +300,7 @@ def save_text_output(file_path: Path, text: str) -> None:
     print_saved_file(file_path)
 
 
-def load_selected_datasets(classifier_choice: str, folders: Dict[str, Path]) -> Tuple[pd.DataFrame, pd.DataFrame, str, str]:
+def load_selected_datasets(classifier_choice: str, folders: Dict[str, Path]) -> Tuple[DataFrame, DataFrame, str, str]:
     """Load the matching training and test files for ID3 or Naive Bayes."""
     data_dir = folders["data"]
     if classifier_choice == "id3":
@@ -178,7 +322,7 @@ def load_selected_datasets(classifier_choice: str, folders: Dict[str, Path]) -> 
     return training_set, test_set, train_file, test_file
 
 
-def inspect_dataset(dataframe: pd.DataFrame, dataset_name: str) -> Dict[str, pd.DataFrame]:
+def inspect_dataset(dataframe: DataFrame, dataset_name: str) -> Dict[str, DataFrame]:
     """Build compact audit tables for a dataset."""
     class_attribute = CONFIG["class_attribute"]
     overview_df = pd.DataFrame([
@@ -198,7 +342,7 @@ def inspect_dataset(dataframe: pd.DataFrame, dataset_name: str) -> Dict[str, pd.
     return {"Overview": overview_df, "Columns": columns_df, "Volume Counts": class_counts_df}
 
 
-def calculate_class_distribution(dataframe: pd.DataFrame, class_attribute: str) -> pd.DataFrame:
+def calculate_class_distribution(dataframe: DataFrame, class_attribute: str) -> DataFrame:
     """Count the number and percentage of records in each class value."""
     total_records = len(dataframe)
     rows = []
@@ -240,7 +384,7 @@ def dominant_class_and_count(class_values: List[Any]) -> Tuple[Any, int]:
     return sorted_counts[0]
 
 
-def calculate_weighted_entropy(dataframe: pd.DataFrame, split_attribute: str, class_attribute: str) -> Tuple[float, str]:
+def calculate_weighted_entropy(dataframe: DataFrame, split_attribute: str, class_attribute: str) -> Tuple[float, str]:
     """Calculate weighted entropy for a candidate ID3 split attribute."""
     total_count = len(dataframe)
     weighted_entropy = 0.0
@@ -256,7 +400,7 @@ def calculate_weighted_entropy(dataframe: pd.DataFrame, split_attribute: str, cl
 
 
 def choose_best_id3_attribute(
-    dataframe: pd.DataFrame,
+    dataframe: DataFrame,
     candidate_attributes: List[str],
     class_attribute: str,
     node_id: int,
@@ -287,7 +431,7 @@ def choose_best_id3_attribute(
     return best_attribute, gain_rows
 
 
-def calculate_mixture_ratio(dataframe: pd.DataFrame, class_attribute: str) -> Tuple[Any, int, float]:
+def calculate_mixture_ratio(dataframe: DataFrame, class_attribute: str) -> Tuple[Any, int, float]:
     """Calculate alpha = c1 / |F1| for a possible ID3 branch."""
     class_values = dataframe[class_attribute].tolist()
     dominant_class, dominant_count = dominant_class_and_count(class_values)
@@ -298,7 +442,7 @@ def calculate_mixture_ratio(dataframe: pd.DataFrame, class_attribute: str) -> Tu
 def build_leaf_node(
     node_id: int,
     depth: int,
-    dataframe: pd.DataFrame,
+    dataframe: DataFrame,
     class_attribute: str,
     predicted_class: Any,
     reason: str,
@@ -321,7 +465,7 @@ def build_leaf_node(
 
 
 def build_id3_tree(
-    dataframe: pd.DataFrame,
+    dataframe: DataFrame,
     candidate_attributes: List[str],
     class_attribute: str,
     t1_threshold: float,
@@ -429,7 +573,7 @@ def build_id3_tree(
     return node
 
 
-def flatten_tree(tree: Dict[str, Any]) -> pd.DataFrame:
+def flatten_tree(tree: Dict[str, Any]) -> DataFrame:
     """Convert the ID3 tree dictionary into a readable table."""
     rows = []
 
@@ -455,7 +599,7 @@ def flatten_tree(tree: Dict[str, Any]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def extract_id3_rules(tree: Dict[str, Any]) -> pd.DataFrame:
+def extract_id3_rules(tree: Dict[str, Any]) -> DataFrame:
     """Convert every root-to-leaf path in the ID3 tree into an IF-THEN rule."""
     rows = []
 
@@ -482,7 +626,7 @@ def extract_id3_rules(tree: Dict[str, Any]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def predict_one_id3_record(tree: Dict[str, Any], record: pd.Series) -> Tuple[Any, str, str]:
+def predict_one_id3_record(tree: Dict[str, Any], record: Series) -> Tuple[Any, str, str]:
     """Predict one record by walking through the ID3 tree."""
     node = tree
     path_steps = []
@@ -496,7 +640,7 @@ def predict_one_id3_record(tree: Dict[str, Any], record: pd.Series) -> Tuple[Any
     return node["predicted_class"], node["reason"], " AND ".join(path_steps)
 
 
-def predict_with_id3_tree(tree: Dict[str, Any], test_set: pd.DataFrame, class_attribute: str) -> pd.DataFrame:
+def predict_with_id3_tree(tree: Dict[str, Any], test_set: DataFrame, class_attribute: str) -> DataFrame:
     """Predict every test record with the ID3 tree and keep the path used."""
     prediction_rows = []
     for row_number, (_, row) in enumerate(test_set.iterrows(), start=1):
@@ -514,7 +658,7 @@ def predict_with_id3_tree(tree: Dict[str, Any], test_set: pd.DataFrame, class_at
     return pd.DataFrame(prediction_rows)
 
 
-def count_correct_predictions(prediction_df: pd.DataFrame) -> int:
+def count_correct_predictions(prediction_df: DataFrame) -> int:
     """Count the number of correct predictions in a prediction table."""
     return int((prediction_df["Actual Volume"] == prediction_df["Predicted Volume"]).sum())
 
@@ -570,7 +714,7 @@ def replace_node_with_leaf(tree: Dict[str, Any], target_node_id: int) -> Dict[st
     return tree_copy
 
 
-def apply_post_pruning(tree: Dict[str, Any], test_set: pd.DataFrame, class_attribute: str, g_parameter: float) -> Tuple[Dict[str, Any], pd.DataFrame]:
+def apply_post_pruning(tree: Dict[str, Any], test_set: DataFrame, class_attribute: str, g_parameter: float) -> Tuple[Dict[str, Any], DataFrame]:
     """Apply the assignment post-pruning rule to the completed ID3 tree."""
     working_tree = copy.deepcopy(tree)
     q_test_count = len(test_set)
@@ -611,7 +755,7 @@ def apply_post_pruning(tree: Dict[str, Any], test_set: pd.DataFrame, class_attri
     return working_tree, pd.DataFrame(decision_rows)
 
 
-def calculate_metrics(prediction_df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+def calculate_metrics(prediction_df: DataFrame) -> Dict[str, DataFrame]:
     """Build multiclass confusion matrix, class metrics, and overall accuracy."""
     actual_values = sorted(set(prediction_df["Actual Volume"].tolist()) | set(prediction_df["Predicted Volume"].tolist()))
     confusion_rows = []
@@ -655,7 +799,7 @@ def calculate_metrics(prediction_df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
     return {"Confusion Matrix": confusion_df, "Overall Metrics": overall_df, "Class Metrics": class_metrics_df}
 
 
-def identify_bayes_attribute_types(training_set: pd.DataFrame) -> Tuple[List[str], List[str], pd.DataFrame]:
+def identify_bayes_attribute_types(training_set: DataFrame) -> Tuple[List[str], List[str], DataFrame]:
     """Separate Naive Bayes attributes into categorical and continuous groups."""
     class_attribute = CONFIG["class_attribute"]
     continuous_attributes = [attribute for attribute in CONFIG["bayes_continuous_attributes"] if attribute in training_set.columns]
@@ -671,7 +815,7 @@ def identify_bayes_attribute_types(training_set: pd.DataFrame) -> Tuple[List[str
     return categorical_attributes, continuous_attributes, pd.DataFrame(rows)
 
 
-def calculate_class_priors(training_set: pd.DataFrame, class_attribute: str) -> pd.DataFrame:
+def calculate_class_priors(training_set: DataFrame, class_attribute: str) -> DataFrame:
     """Calculate P(Volume class) for every class in the training set."""
     total_records = len(training_set)
     rows = []
@@ -687,11 +831,11 @@ def calculate_class_priors(training_set: pd.DataFrame, class_attribute: str) -> 
 
 
 def calculate_categorical_counts(
-    training_set: pd.DataFrame,
-    test_set: pd.DataFrame,
+    training_set: DataFrame,
+    test_set: DataFrame,
     categorical_attributes: List[str],
     class_attribute: str,
-) -> Tuple[pd.DataFrame, Dict[str, List[Any]]]:
+) -> Tuple[DataFrame, Dict[str, List[Any]]]:
     """Count categorical attribute values by Volume class."""
     class_values = sorted(training_set[class_attribute].unique().tolist())
     attribute_domains = {
@@ -715,7 +859,7 @@ def calculate_categorical_counts(
 
 
 
-def check_smoothing_needed(categorical_counts_df: pd.DataFrame) -> Tuple[bool, pd.DataFrame]:
+def check_smoothing_needed(categorical_counts_df: DataFrame) -> Tuple[bool, DataFrame]:
     """Check whether any categorical count is zero, which would zero out a Bayes score."""
     zero_rows = categorical_counts_df.loc[categorical_counts_df["Count Within Class"] == 0].copy()
     smoothing_needed = not zero_rows.empty
@@ -731,10 +875,10 @@ def check_smoothing_needed(categorical_counts_df: pd.DataFrame) -> Tuple[bool, p
 
 
 def calculate_categorical_probabilities(
-    categorical_counts_df: pd.DataFrame,
+    categorical_counts_df: DataFrame,
     attribute_domains: Dict[str, List[Any]],
     smoothing_needed: bool,
-) -> pd.DataFrame:
+) -> DataFrame:
     """Calculate P(attribute value | Volume class) from categorical counts."""
     rows = []
     for _, row in categorical_counts_df.iterrows():
@@ -779,10 +923,10 @@ def calculate_sample_std(values: List[float], mean_value: float) -> float:
 
 
 def calculate_continuous_statistics(
-    training_set: pd.DataFrame,
+    training_set: DataFrame,
     continuous_attributes: List[str],
     class_attribute: str,
-) -> pd.DataFrame:
+) -> DataFrame:
     """Calculate mean and sample standard deviation by Volume class for continuous attributes."""
     rows = []
     for class_value in sorted(training_set[class_attribute].unique().tolist()):
@@ -810,7 +954,7 @@ def calculate_continuous_probability(value: float, mean_value: float, std_value:
 
 
 def lookup_categorical_probability(
-    probability_df: pd.DataFrame,
+    probability_df: DataFrame,
     attribute: str,
     attribute_value: Any,
     class_value: Any,
@@ -827,7 +971,7 @@ def lookup_categorical_probability(
 
 
 def lookup_continuous_stats(
-    continuous_stats_df: pd.DataFrame,
+    continuous_stats_df: DataFrame,
     attribute: str,
     class_value: Any,
 ) -> Tuple[float, float]:
@@ -842,14 +986,14 @@ def lookup_continuous_stats(
 
 
 def predict_bayes_test_records(
-    test_set: pd.DataFrame,
-    class_priors_df: pd.DataFrame,
-    categorical_probabilities_df: pd.DataFrame,
-    continuous_stats_df: pd.DataFrame,
+    test_set: DataFrame,
+    class_priors_df: DataFrame,
+    categorical_probabilities_df: DataFrame,
+    continuous_stats_df: DataFrame,
     categorical_attributes: List[str],
     continuous_attributes: List[str],
     class_attribute: str,
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> Tuple[DataFrame, DataFrame, DataFrame]:
     """Predict test records with Naive Bayes using from-scratch probability calculations."""
     class_values = sorted(class_priors_df["Volume Class"].tolist())
     prior_lookup = dict(zip(class_priors_df["Volume Class"], class_priors_df["Prior Probability"]))
@@ -953,7 +1097,7 @@ def build_html_table(headers: List[str], rows: List[List[Any]]) -> str:
 def build_report_text(
     method_label: str,
     user_inputs: Dict[str, Any],
-    summary_tables: Dict[str, pd.DataFrame],
+    summary_tables: Dict[str, DataFrame],
     result_text: str,
 ) -> str:
     """Build the method-specific report text used for TXT, MD, HTML, DOCX, and PDF exports."""
@@ -1140,8 +1284,8 @@ def build_defense_notes(method_label: str, user_inputs: Dict[str, Any], smoothin
 
 
 def run_id3_pipeline(
-    training_set: pd.DataFrame,
-    test_set: pd.DataFrame,
+    training_set: DataFrame,
+    test_set: DataFrame,
     folders: Dict[str, Path],
     user_inputs: Dict[str, Any],
     live_output: bool,
@@ -1150,6 +1294,7 @@ def run_id3_pipeline(
     class_attribute = CONFIG["class_attribute"]
     output_dir = folders["id3_outputs"]
     report_dir = folders["id3_reports"]
+    private_notes_dir = folders["id3_private_notes"]
     candidate_attributes = [column for column in training_set.columns if column != class_attribute]
 
     live_print(live_output, "\n--- Loading ID3 training and test files ---")
@@ -1188,6 +1333,7 @@ def run_id3_pipeline(
     pre_pruning_df = pd.DataFrame(pre_pruning_rows)
     tree_df = flatten_tree(tree)
     rules_before_df = extract_id3_rules(tree)
+    live_print(live_output, "\n--- Saving ID3 tree, gain, and rule outputs ---")
     save_excel_output(output_dir / "07_id3_gain_calculations_by_node.xlsx", gain_df)
     save_excel_output(output_dir / "08_id3_selected_splits.xlsx", split_df)
     save_excel_output(output_dir / "09_id3_pre_pruning_decisions.xlsx", pre_pruning_df)
@@ -1206,6 +1352,7 @@ def run_id3_pipeline(
     rules_after_df = extract_id3_rules(pruned_tree)
     predictions_after_df = predict_with_id3_tree(pruned_tree, test_set, class_attribute)
     metrics_after = calculate_metrics(predictions_after_df)
+    live_print(live_output, "\n--- Saving post-pruning tree, rule, and metric outputs ---")
     save_excel_output(output_dir / "14_id3_post_pruning_calculations.xlsx", post_pruning_df)
     save_excel_output(output_dir / "15_id3_tree_structure_after_post_pruning.xlsx", tree_after_df)
     save_excel_output(output_dir / "16_id3_extracted_rules_after_post_pruning.xlsx", rules_after_df)
@@ -1245,9 +1392,10 @@ def run_id3_pipeline(
     }
     report_text = build_report_text("ID3", user_inputs, summary_tables, result_text)
     defense_notes = build_defense_notes("ID3", user_inputs)
-    save_excel_output(output_dir / "20_id3_defense_notes.xlsx", pd.DataFrame({"Defense Notes": defense_notes.splitlines()}))
+    live_print(live_output, "\n--- Saving final ID3 report package ---")
     save_report_files(report_dir, "Assignment2_Report_ID3", "Assignment 2 Report - ID3", report_text)
-    save_report_files(report_dir, "Assignment2_DefenseNotes_ID3", "Assignment 2 Defense Notes - ID3", defense_notes)
+    save_excel_output(private_notes_dir / "20_id3_defense_notes.xlsx", pd.DataFrame({"Defense Notes": defense_notes.splitlines()}))
+    save_report_files(private_notes_dir, "Assignment2_DefenseNotes_ID3", "Assignment 2 Defense Notes - ID3", defense_notes)
 
     run_summary_df = pd.DataFrame([{
         "Classifier": "ID3",
@@ -1260,13 +1408,14 @@ def run_id3_pipeline(
         "Final Accuracy Percent": final_accuracy,
         "Run Completed At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }])
+    live_print(live_output, "\n--- Saving ID3 run summary files ---")
     save_excel_output(output_dir / "00_run_summary.xlsx", run_summary_df)
     save_text_output(output_dir / "00_run_summary.json", run_summary_df.iloc[0].to_json(indent=2))
 
 
 def run_bayes_pipeline(
-    training_set: pd.DataFrame,
-    test_set: pd.DataFrame,
+    training_set: DataFrame,
+    test_set: DataFrame,
     folders: Dict[str, Path],
     user_inputs: Dict[str, Any],
     live_output: bool,
@@ -1275,6 +1424,7 @@ def run_bayes_pipeline(
     class_attribute = CONFIG["class_attribute"]
     output_dir = folders["bayes_outputs"]
     report_dir = folders["bayes_reports"]
+    private_notes_dir = folders["bayes_private_notes"]
 
     live_print(live_output, "\n--- Loading Bayes training and test files ---")
     save_excel_output(output_dir / "03_bayes_training_dataset_overview.xlsx", inspect_dataset(training_set, "Bayes Training Set"))
@@ -1292,6 +1442,7 @@ def run_bayes_pipeline(
     smoothing_needed, smoothing_df = check_smoothing_needed(categorical_counts_df)
     categorical_probabilities_df = calculate_categorical_probabilities(categorical_counts_df, attribute_domains, smoothing_needed)
     continuous_stats_df = calculate_continuous_statistics(training_set, continuous_attributes, class_attribute)
+    live_print(live_output, "\n--- Saving Bayes probability setup outputs ---")
     save_excel_output(output_dir / "07_bayes_class_priors.xlsx", class_priors_df)
     save_excel_output(output_dir / "08_bayes_categorical_counts.xlsx", categorical_counts_df)
     save_excel_output(output_dir / "09_bayes_smoothing_decision.xlsx", smoothing_df)
@@ -1309,6 +1460,7 @@ def run_bayes_pipeline(
         class_attribute,
     )
     metrics = calculate_metrics(predictions_df)
+    live_print(live_output, "\n--- Saving Bayes prediction and metric outputs ---")
     save_excel_output(output_dir / "12_bayes_test_probability_details.xlsx", probability_details_df)
     save_excel_output(output_dir / "13_bayes_class_scores.xlsx", class_scores_df)
     save_excel_output(output_dir / "14_bayes_test_predictions.xlsx", predictions_df)
@@ -1331,9 +1483,10 @@ def run_bayes_pipeline(
     }
     report_text = build_report_text("Naive Bayes", user_inputs, summary_tables, result_text)
     defense_notes = build_defense_notes("Naive Bayes", user_inputs, smoothing_text)
-    save_excel_output(output_dir / "17_bayes_defense_notes.xlsx", pd.DataFrame({"Defense Notes": defense_notes.splitlines()}))
+    live_print(live_output, "\n--- Saving final Bayes report package ---")
     save_report_files(report_dir, "Assignment2_Report_Bayes", "Assignment 2 Report - Naive Bayes", report_text)
-    save_report_files(report_dir, "Assignment2_DefenseNotes_Bayes", "Assignment 2 Defense Notes - Naive Bayes", defense_notes)
+    save_excel_output(private_notes_dir / "17_bayes_defense_notes.xlsx", pd.DataFrame({"Defense Notes": defense_notes.splitlines()}))
+    save_report_files(private_notes_dir, "Assignment2_DefenseNotes_Bayes", "Assignment 2 Defense Notes - Naive Bayes", defense_notes)
 
     run_summary_df = pd.DataFrame([{
         "Classifier": "Naive Bayes",
@@ -1345,36 +1498,22 @@ def run_bayes_pipeline(
         "Final Accuracy Percent": final_accuracy,
         "Run Completed At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }])
+    live_print(live_output, "\n--- Saving Bayes run summary files ---")
     save_excel_output(output_dir / "00_run_summary.xlsx", run_summary_df)
     save_text_output(output_dir / "00_run_summary.json", run_summary_df.iloc[0].to_json(indent=2))
 
 
 def main() -> None:
     """Run Assignment 2 from user input through selected classifier outputs."""
+    SESSION_FLAGS["show_live_terminal_output"] = True
+
+    classifier_choice, live_output, user_inputs = collect_startup_inputs()
+    SESSION_FLAGS["show_live_terminal_output"] = live_output
+
+    validate_runtime_environment()
     base_dir = CONFIG["base_dir"]
+    validate_project_files(base_dir)
     folders = create_assignment_folders(base_dir)
-
-    classifier_choice = get_classifier_choice()
-    live_output = get_yes_no_input("Show live section output in the terminal?", CONFIG["show_live_section_output_default"])
-
-    user_inputs: Dict[str, Any] = {
-        "Classifier Choice": "ID3" if classifier_choice == "id3" else "Naive Bayes",
-        "Live Terminal Output": "Yes" if live_output else "No",
-    }
-
-    if classifier_choice == "id3":
-        t1_threshold = get_decimal_input(
-            "Enter the pre-pruning threshold T1. T1 controls when ID3 stops splitting early using alpha = c1 / |F1|. Enter T1 (0 < T1 <= 1): ",
-            0,
-            1,
-        )
-        g_parameter = get_decimal_input(
-            "Enter the post-pruning parameter g. Valid range: 0 < g <= 0.015. Enter g: ",
-            0,
-            0.015,
-        )
-        user_inputs["T1 Threshold"] = t1_threshold
-        user_inputs["g Parameter"] = g_parameter
 
     live_print(live_output, "\n--- Creating output folders ---")
     function_purpose_df = pd.DataFrame(list(explain_function_purpose().items()), columns=["Function", "Purpose"])
@@ -1395,4 +1534,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (ImportError, RuntimeError, FileNotFoundError) as exc:
+        print(f"\nStartup check failed: {exc}", flush=True)
+        raise SystemExit(1)
