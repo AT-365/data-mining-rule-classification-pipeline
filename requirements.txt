@@ -1,2 +1,6 @@
-numpy>=1.24
-pandas>=2.0
+pandas
+openpyxl
+python-docx
+reportlab
+jupyter
+ipykernel

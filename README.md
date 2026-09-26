@@ -1,123 +1,120 @@
-# Data Mining Rule-Classification Pipeline
+# Data Mining Assignment 2 Package
 
-[![Tests](https://github.com/AT-365/data-mining-rule-classification-pipeline/actions/workflows/tests.yml/badge.svg)](https://github.com/AT-365/data-mining-rule-classification-pipeline/actions/workflows/tests.yml)
+Edited at: 2026-05-06 05:55
 
-An end-to-end Python data-mining project that transforms raw tabular data into an evaluated, interpretable association-rule classifier. The repository now includes the complete portfolio-ready pipeline in [`data_mining_pipeline.py`](data_mining_pipeline.py).
+## Purpose
 
-## Why this project matters
+This folder contains the VS Code-ready Python pipeline for Data Mining Assignment 2.  The program lets the user choose either ID3 or Naive Bayes, then runs the selected method from start to finish.
 
-This project demonstrates more than model fitting. It covers data validation, preprocessing, feature analysis, discretization, association-rule mining, rule selection, prediction, evaluation, and auditable output generation. The result is interpreted honestly: the classifier made highly reliable positive predictions, but missed many positive cases.
+The pipeline creates step-by-step Excel files, report files, and defense notes while printing progress messages in the VS Code terminal.
 
-## Pipeline
+## Folder Structure
 
-1. Load and validate a 414-record CSV dataset.
-2. Remove statistical outliers using population mean and standard deviation rules.
-3. Evaluate Pearson correlations at a 0.70 threshold.
-4. Convert continuous variables into binary intervals using entropy-based split points.
-5. Create a class-stratified 10% test set with a fixed random seed.
-6. Mine frequent itemsets with an Apriori implementation.
-7. Generate and filter association rules using support, confidence, balance, and validity criteria.
-8. Apply deterministic conflict resolution to generate predictions.
-9. Produce confusion-matrix metrics and 27 report-ready audit files.
+```text
+DataMining_Assignment2Package_v1_20260506/
+├── data/
+│   ├── A2--ID3-Training set.csv
+│   ├── A2--ID3-TEST set.csv
+│   ├── A2--Bayes-Training set.csv
+│   └── A2--Bayes-TEST set.csv
+├── outputs/
+│   ├── id3/
+│   └── bayes/
+├── reports/
+│   ├── id3/
+│   └── bayes/
+├── notebooks/
+├── DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+├── requirements.txt
+└── README.md
+```
 
-## Verified results
+## VS Code Setup
 
-| Measure | Result |
-|---|---:|
-| Raw records | 414 |
-| Outliers removed | 105 |
-| Cleaned records | 309 |
-| Test records | 32 |
-| Frequent itemsets | 719 |
-| Final Treat-conclusion rules | 8 |
-| Accuracy | 56.25% |
-| Recall | 22.22% |
-| Precision | 100.00% |
+1. Open the full folder in VS Code.
+2. Open the terminal inside VS Code.
+3. Create and activate a virtual environment if desired.
 
-Confusion matrix: **TP 4, FN 14, FP 0, TN 14**.
+Windows PowerShell example:
 
-The model was conservative: every positive prediction was correct in the held-out sample, but it identified only 4 of 18 positive cases. That tradeoff makes the project useful for discussing class coverage, threshold selection, and why one favorable metric should never be reported in isolation.
-
-## Code highlights
-
-- Input validation and portable command-line arguments
-- Statistical outlier detection and correlation analysis
-- Entropy and information-gain calculations
-- Custom Apriori frequent-itemset mining
-- Association-rule generation and deterministic conflict resolution
-- Stratified holdout evaluation
-- Reproducible CSV and JSON audit outputs
-
-## Repository structure
-
-| Path | Purpose |
-|---|---|
-| [`data_mining_pipeline.py`](data_mining_pipeline.py) | Complete executable analysis pipeline |
-| [`requirements.txt`](requirements.txt) | Python dependencies |
-| [`DATASET.md`](DATASET.md) | Input schema and dataset availability |
-| [`tests/test_pipeline.py`](tests/test_pipeline.py) | Synthetic unit tests for core calculations and validation |
-| [`docs/PUBLICATION_NOTES.md`](docs/PUBLICATION_NOTES.md) | Public-release boundaries |
-
-## Run locally
-
-```bash
+```powershell
 python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-Activate the environment, then install the dependencies:
+Mac/Linux example:
 
 ```bash
-python -m pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Run the pipeline with an eligible CSV file:
+## How to Run
+
+From the project folder, run:
 
 ```bash
-python data_mining_pipeline.py \
-  --input path/to/input.csv \
-  --output-dir outputs
+python DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 ```
 
-The original course dataset is not distributed. See [`DATASET.md`](DATASET.md) for the required input schema.
+The program will ask:
 
-## Automated tests
+1. Whether to run ID3 or Bayes.
+2. Whether to show live section output in the terminal.
+3. If ID3 is selected, it will ask for T1 and g.
 
-The public test suite uses small synthetic inputs rather than the protected course dataset. It checks input validation, entropy, Apriori support counting, invalid itemset detection, and confusion-matrix metrics.
+## Suggested Zoom Demo Inputs
 
-```bash
-python -m unittest discover -s tests -v
+### ID3 Demo
+
+```text
+Classifier choice: ID3
+Show live section output: yes
+T1: 0.80
+g: 0.010
 ```
 
-GitHub Actions runs the same tests automatically after each push and pull request.
+### Naive Bayes Demo
 
-## Technologies and methods
+```text
+Classifier choice: Bayes
+Show live section output: yes
+```
 
-- Python, pandas, and NumPy
-- CSV ingestion and structured exports
-- Outlier detection and Pearson correlation
-- Entropy-based discretization
-- Apriori frequent-itemset mining
-- Association-rule classification
-- Class-stratified train/test splitting
-- Confusion matrices, accuracy, recall, and precision
+## Important Algorithm Notes
 
-## What I learned
+- ID3 is implemented from scratch.
+- Naive Bayes probability calculations are implemented from scratch.
+- The program does not use scikit-learn or a packaged classifier.
+- Pandas is used for reading CSV files and building tables.
+- Openpyxl is used for Excel output.
+- Python's standard math library is used for probability formulas.
 
-- A reproducible pipeline needs explicit configuration, deterministic sampling, and auditable intermediate outputs.
-- Perfect precision can coexist with poor recall; the operational cost of false negatives matters.
-- Support and confidence thresholds affect both rule quality and coverage.
-- Interpretable rules make model behavior easier to inspect, but do not eliminate the need for rigorous evaluation.
+## Output Behavior
 
-## Repository scope
+As the `.py` pipeline runs, the VS Code terminal prints progress messages such as:
 
-This public portfolio version includes the complete analysis code with portable file handling. The original assignment specification, professor-provided dataset, submitted report, and generated row-level outputs remain private to protect course materials and data. See [Publication Notes](docs/PUBLICATION_NOTES.md).
+```text
+--- Calculating entropy and information gain ---
+Saved: outputs/id3/07_id3_gain_calculations_by_node.xlsx
+```
 
-## Interview summary
+This lets the professor see that files are being generated during the live run.
 
-> I built a reproducible Python pipeline that cleaned a 414-record dataset, performed feature analysis and entropy-based discretization, mined association rules, and evaluated a rule-based classifier on a stratified holdout set. The most important result was not just the 100% precision—it was recognizing that recall was only 22.22%, so the model was trustworthy when it predicted positive but too conservative for broad detection.
+## Generated Report Formats
 
----
+Each selected method creates:
 
-**Project type:** Completed graduate academic project  
-**Course:** CSCI 7434 — Data Mining, Georgia Southern University  
-**Author:** Autenia Murray
+- `.txt`
+- `.md`
+- `.html`
+- `.docx`
+- `.pdf`
+
+Reports are saved in either `reports/id3/` or `reports/bayes/`.
+
+## Generated Excel Files
+
+Excel files are saved in either `outputs/id3/` or `outputs/bayes/`.  Each file corresponds to one major step or calculation, such as dataset overview, entropy/gain, pruning decisions, probability tables, predictions, confusion matrix, metrics, and defense notes.
