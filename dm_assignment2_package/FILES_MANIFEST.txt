@@ -1,55 +1,50 @@
-00_run_summary (3).xlsx
-00_run_summary (4).json
-00_run_summary.json
-00_run_summary.xlsx
-01_function_purposes (1).xlsx
-01_function_purposes.xlsx
-02_user_inputs (2).xlsx
-02_user_inputs.xlsx
-03_bayes_training_dataset_overview.xlsx
-03_id3_training_dataset_overview.xlsx
-04_bayes_test_dataset_overview.xlsx
-04_id3_test_dataset_overview.xlsx
-05_bayes_class_distribution.xlsx
-05_id3_class_distribution.xlsx
-06_bayes_attribute_types.xlsx
-06_id3_entropy_start.xlsx
-07_bayes_class_priors.xlsx
-07_id3_gain_calculations_by_node.xlsx
-08_bayes_categorical_counts.xlsx
-08_id3_selected_splits.xlsx
-09_bayes_smoothing_decision.xlsx
-09_id3_pre_pruning_decisions.xlsx
-10_bayes_categorical_probabilities.xlsx
-10_id3_tree_structure_before_post_pruning.xlsx
-11_bayes_continuous_statistics.xlsx
-11_id3_extracted_rules_before_post_pruning.xlsx
-12_bayes_test_probability_details.xlsx
-12_id3_test_predictions_before_post_pruning.xlsx
-13_bayes_class_scores.xlsx
-13_id3_metrics_before_post_pruning.xlsx
-14_bayes_test_predictions.xlsx
-14_id3_post_pruning_calculations.xlsx
-15_bayes_confusion_matrix.xlsx
-15_id3_tree_structure_after_post_pruning.xlsx
-16_bayes_metrics.xlsx
-16_id3_extracted_rules_after_post_pruning.xlsx
-17_bayes_defense_notes.xlsx
-17_id3_test_predictions_after_post_pruning.xlsx
-18_id3_metrics_after_post_pruning.xlsx
-19_id3_threshold_explanations.xlsx
-20_id3_defense_notes.xlsx
-A2--Bayes-TEST set.csv
-A2--Bayes-Training set.csv
-A2--ID3-TEST set.csv
-A2--ID3-Training set.csv
 Assignment2_DefenseNotes_Bayes.pdf
 Assignment2_DefenseNotes_ID3.pdf
 Assignment2_Report_Bayes.pdf
 Assignment2_Report_ID3.pdf
-DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.cpython-313.pyc
+DM-Assignment 2-Directions.pdf
 DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 DataMining_PresentationScript_v1_20260506_Assignments1and2.pdf
-DM-Assignment 2-Directions.pdf
-Phase4_ValidationSummary_v1_20260506.md
-Phase6_PresentationRehearsalGuide_v1_20260506.md
+bayes/00_run_summary.json
+bayes/00_run_summary.xlsx
+bayes/01_function_purposes.xlsx
+bayes/02_user_inputs.xlsx
+bayes/03_bayes_training_dataset_overview.xlsx
+bayes/04_bayes_test_dataset_overview.xlsx
+bayes/05_bayes_class_distribution.xlsx
+bayes/06_bayes_attribute_types.xlsx
+bayes/07_bayes_class_priors.xlsx
+bayes/08_bayes_categorical_counts.xlsx
+bayes/09_bayes_smoothing_decision.xlsx
+bayes/10_bayes_categorical_probabilities.xlsx
+bayes/11_bayes_continuous_statistics.xlsx
+bayes/12_bayes_test_probability_details.xlsx
+bayes/13_bayes_class_scores.xlsx
+bayes/14_bayes_test_predictions.xlsx
+bayes/15_bayes_confusion_matrix.xlsx
+bayes/16_bayes_metrics.xlsx
+data/A2--Bayes-TEST set.csv
+data/A2--Bayes-Training set.csv
+data/A2--ID3-TEST set.csv
+data/A2--ID3-Training set.csv
+id3/00_run_summary.json
+id3/00_run_summary.xlsx
+id3/01_function_purposes.xlsx
+id3/02_user_inputs.xlsx
+id3/03_id3_training_dataset_overview.xlsx
+id3/04_id3_test_dataset_overview.xlsx
+id3/05_id3_class_distribution.xlsx
+id3/06_id3_entropy_start.xlsx
+id3/07_id3_gain_calculations_by_node.xlsx
+id3/08_id3_selected_splits.xlsx
+id3/09_id3_pre_pruning_decisions.xlsx
+id3/10_id3_tree_structure_before_post_pruning.xlsx
+id3/11_id3_extracted_rules_before_post_pruning.xlsx
+id3/12_id3_test_predictions_before_post_pruning.xlsx
+id3/13_id3_metrics_before_post_pruning.xlsx
+id3/14_id3_post_pruning_calculations.xlsx
+id3/15_id3_tree_structure_after_post_pruning.xlsx
+id3/16_id3_extracted_rules_after_post_pruning.xlsx
+id3/17_id3_test_predictions_after_post_pruning.xlsx
+id3/18_id3_metrics_after_post_pruning.xlsx
+id3/19_id3_threshold_explanations.xlsx

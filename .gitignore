@@ -10,3 +10,7 @@ outputs/
 *.xlsx
 *.zip
 *.pdf
+!dm_assignment2_package/data/
+!dm_assignment2_package/**/*.csv
+!dm_assignment2_package/**/*.xlsx
+!dm_assignment2_package/**/*.pdf

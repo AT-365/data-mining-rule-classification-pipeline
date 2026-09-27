@@ -1,12 +1,12 @@
 Professor submission package for Data Mining Assignment 2
 
 Included:
-- DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+- dm_assignment2_package/DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 - requirements.txt
 - README.md
-- data/
-- outputs/
-- reports/
+- dm_assignment2_package/data/
+- dm_assignment2_package/bayes/
+- dm_assignment2_package/id3/
 
 Excluded on purpose:
 - private_defense_notes/

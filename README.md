@@ -18,19 +18,24 @@ This project demonstrates more than model fitting. It covers data validation, pr
 
 <<<<<<< HEAD
 ```text
-DataMining_Assignment2Package_v1_20260506/
-|-- data/
-|   |-- A2--ID3-Training set.csv
-|   |-- A2--ID3-TEST set.csv
-|   |-- A2--Bayes-Training set.csv
-|   `-- A2--Bayes-TEST set.csv
-|-- outputs/
+data-mining-rule-classification-pipeline/
+|-- dm_assignment2_package/
+|   |-- Assignment2_DefenseNotes_Bayes.pdf
+|   |-- Assignment2_DefenseNotes_ID3.pdf
+|   |-- Assignment2_Report_Bayes.pdf
+|   |-- Assignment2_Report_ID3.pdf
+|   |-- DM-Assignment 2-Directions.pdf
+|   |-- DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+|   |-- DataMining_PresentationScript_v1_20260506_Assignments1and2.pdf
+|   |-- bayes/
+|   |-- data/
+|   |   |-- A2--ID3-Training set.csv
+|   |   |-- A2--ID3-TEST set.csv
+|   |   |-- A2--Bayes-Training set.csv
+|   |   `-- A2--Bayes-TEST set.csv
 |   |-- id3/
-|   `-- bayes/
-|-- reports/
-|   |-- id3/
-|   `-- bayes/
-|-- DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+|   |-- FILES_MANIFEST.txt
+|   `-- README.md
 |-- requirements.txt
 `-- README.md
 ```
@@ -47,7 +52,7 @@ If `python` does not work on a computer, try:
 
 ```powershell
 py -m pip install -r requirements.txt
-py DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+py dm_assignment2_package/DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 ```
 
 1. Open the full folder in VS Code or another development environment.
@@ -135,7 +140,7 @@ Run the pipeline with an eligible CSV file:
 
 <<<<<<< HEAD
 ```powershell
-python DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+python dm_assignment2_package/DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 ```
 
 If the required packages are missing, the script now stops immediately and prints a setup message instead of failing later during Excel, DOCX, or PDF export.
@@ -146,7 +151,7 @@ Recommended first-time setup on another computer:
 
 ```powershell
 python -m pip install -r requirements.txt
-python DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
+python dm_assignment2_package/DataMining_Assignment2Pipeline_v1_20260506_FullSubmission.py
 =======
 ```bash
 python data_mining_pipeline.py \
