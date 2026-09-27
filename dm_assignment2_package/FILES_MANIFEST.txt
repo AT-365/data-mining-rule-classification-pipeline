@@ -1,3 +1,7 @@
+# Tracked Assignment 2 package artifacts committed in this repository.
+# Pipeline-generated outputs not present in Git (for example additional defense-note workbooks)
+# are intentionally not listed here.
+
 Assignment2_DefenseNotes_Bayes.pdf
 Assignment2_DefenseNotes_ID3.pdf
 Assignment2_Report_Bayes.pdf
