@@ -1,0 +1,13 @@
+Function,Purpose
+compute_attribute_statistics,"Calculates AVG, population STD, lower bound, upper bound, and outlier counts for each independent attribute."
+mark_outliers_and_clean,Flags outlier rows and removes any record that contains at least one outlier.
+build_correlation_matrix,Builds the Pearson correlation matrix on the cleaned independent attributes and identifies any pair above the chosen threshold.
+build_diff_union,"Builds the Diff_Union candidate set by sorting values, computing adjacent differences, selecting the three largest differences, and collecting the responsible values."
+choose_best_entropy_threshold,Tests only Diff_Union candidate thresholds and keeps the threshold with maximum information gain.
+discretize_dataset,Converts each continuous independent attribute into a binary discrete attribute using the chosen entropy threshold.
+split_train_test,"Creates Econ-TEST and Econ-TRAIN from the fully discretized Economy dataset using a reproducible, class-stratified random split."
+build_table_a_and_transactions,"Creates Table A, renames discrete values to I-labels, and converts Econ-TRAIN and Econ-TEST into item transactions for Apriori."
+apriori_frequent_itemsets,Runs Apriori level by level using the user-selected minimum support count.
+generate_association_rules,Generates association rules from the valid frequent itemsets and computes confidence for each rule.
+predict_test_records,Applies Format-1-Rules to Econ-TEST and produces one binary prediction per record using a documented tie-breaking/default strategy.
+calculate_metrics,"Builds the TP/FN/FP/TN matrix and calculates Accuracy, Recall, and Precision."

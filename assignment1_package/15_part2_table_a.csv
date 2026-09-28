@@ -1,0 +1,17 @@
+Attribute Name,Discrete Value,Naming,Range
+treat,0,I1,0
+treat,1,I2,1
+debt,1,I3,[0.4-14.8)
+debt,2,I4,[14.8-101.5]
+lopen,1,I5,[44.7-155.9)
+lopen,2,I6,[155.9-175.1]
+lrer,1,I7,[77.2-110.7)
+lrer,2,I8,[110.7-117.9]
+bndvol,1,I9,[0.0-1.7)
+bndvol,2,I10,[1.7-1.8]
+gdpgvol,1,I11,[0.2-4.6)
+gdpgvol,2,I12,[4.6-5.0]
+pivol,1,I13,[0.0-0.6)
+pivol,2,I14,[0.6-2.9]
+spreadvol,1,I15,[0.0-0.1)
+spreadvol,2,I16,[0.1-2.4]

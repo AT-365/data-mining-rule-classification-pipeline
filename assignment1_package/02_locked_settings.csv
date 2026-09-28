@@ -1,0 +1,7 @@
+Setting,Value
+Correlation Threshold,0.7
+Confidence Threshold,0.7
+Minimum Support Count,17
+Random Seed,100
+Round Test Sample Up,True
+No-Match Prediction,0
