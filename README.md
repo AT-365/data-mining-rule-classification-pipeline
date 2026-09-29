@@ -4,6 +4,8 @@
 
 A graduate Data Mining portfolio containing two independent, from-scratch Python projects: an association-rule classifier and an interactive ID3/Naive Bayes classification pipeline.
 
+**Portfolio Scope:** This repository preserves two separate graduate Data Mining assignments completed in the same course. Assignment 1 focuses on preprocessing and association-rule classification; Assignment 2 focuses on from-scratch ID3 and Naive Bayes classification. They are presented together for course context, not as one continuous system.
+
 > **Project type:** Two independent graduate academic projects  
 > **Portfolio focus:** Reproducible preprocessing, interpretable classification, transparent evaluation, and calculation-level evidence  
 > **Author:** Autenia Murray
@@ -62,7 +64,7 @@ Start with [`assignment2_package/README.md`](assignment2_package/README.md).
 
 Metrics are sourced from committed run summaries and output files, not reconstructed from memory.
 
-## What I Built
+## What I Built and Demonstrated
 
 - a reproducible association-rule classification pipeline with 26 CSV audit outputs;
 - entropy-based discretization and Apriori frequent-itemset mining;
@@ -99,15 +101,29 @@ Run the repository checks from the root:
 python -m unittest discover -s tests -v
 ```
 
+## Data and Evaluation Challenges
+
+These projects required more than fitting a model to a prepared dataset:
+
+- **Assignment 1:** The 414-record macroeconomic dataset contains continuous variables and outliers. The pipeline removes outliers, measures correlations, discretizes attributes with entropy-based thresholds, creates a reproducible stratified split, and exposes the precision-recall tradeoff of the final rule classifier.
+- **Assignment 2:** Separate training and test datasets contain categorical and continuous attributes. The interactive program accepts user-selected classifier and pruning settings, records calculation-level evidence, and supports the live explanation required during the course defense.
+- **Evaluation constraint:** ID3 post-pruning uses the test set because that procedure was required by the assignment. The repository documents this academic constraint rather than presenting it as recommended production practice.
+
+The source datasets, run summaries, and generated evidence are retained so a reviewer can trace the reported results without relying on unsupported reconstruction.
+
+See the [Assignment 1 documentation](assignment1_package/README.md), [Assignment 1 directions](assignment1_package/docs/assignment-directions.pdf), [Assignment 2 documentation](assignment2_package/README.md), and [redacted Assignment 2 directions](assignment2_package/docs/assignment-directions-redacted.pdf).
+
 ## Repository Map
 
 | Path | Purpose |
 |---|---|
 | [`assignment1_package/`](assignment1_package/) | Association-rule classification project |
 | [`assignment1_package/data/`](assignment1_package/data/) | Assignment 1 input data |
+| [`assignment1_package/docs/`](assignment1_package/docs/) | Assignment 1 directions and defense notes |
 | [`assignment1_package/outputs/`](assignment1_package/outputs/) | Assignment 1 CSV/JSON audit trail |
 | [`assignment2_package/`](assignment2_package/) | ID3 and Naive Bayes project |
 | [`assignment2_package/data/`](assignment2_package/data/) | Assignment 2 training/test datasets |
+| [`assignment2_package/docs/`](assignment2_package/docs/) | Redacted Assignment 2 directions |
 | [`assignment2_package/outputs/`](assignment2_package/outputs/) | Valid ID3 and Naive Bayes calculation workbooks |
 | [`assignment2_package/reports/`](assignment2_package/reports/) | Generated reports in five formats |
 | [`assignment2_package/defense_notes/`](assignment2_package/defense_notes/) | Live-defense reference materials |
