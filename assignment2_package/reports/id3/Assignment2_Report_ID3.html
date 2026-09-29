@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>Assignment 2 Report - ID3</title>
+<style>
+body { font-family: Georgia, 'Times New Roman', serif; margin: 36px; line-height: 1.5; color: #222; }
+h1 { color: #7a2f20; border-bottom: 3px solid #d9b7a8; padding-bottom: 8px; }
+h2 { background: #f5e7df; padding: 8px; border-left: 5px solid #b85742; }
+p { margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>Assignment 2 Data Mining Report - ID3</h1>
+<br>
+<h2>Program Inputs</h2>
+<p>- **Classifier Choice:** ID3</p>
+<p>- **Live Terminal Output:** Yes</p>
+<p>- **T1 Threshold:** 0.8</p>
+<p>- **g Parameter:** 0.01</p>
+<p>- **Training File:** A2--ID3-Training set.csv</p>
+<p>- **Test File:** A2--ID3-TEST set.csv</p>
+<br>
+<h2>What This Method Does</h2>
+<p>ID3 builds a decision tree from the training set, extracts readable IF-THEN rules, and uses those rules to classify the test set.</p>
+<p>The pre-pruning threshold T1 controls early stopping during tree construction.  The post-pruning parameter g controls whether a completed subtree can be removed after testing the effect on classification quality.</p>
+<br>
+<h2>Main Result</h2>
+<p>After post-pruning, ID3 correctly classified 47.73% of the ID3 test records.</p>
+<br>
+<h2>Formula Notes</h2>
+<p>- ID3 entropy/MC: -sum(p * log2(p)).</p>
+<p>- ID3 Gain: MC(D) - WMC(attribute).</p>
+<p>- ID3 pre-pruning mixture ratio: alpha = c1 / |F1|.</p>
+<p>- ID3 post-pruning: if (N - M) / Q &lt;= gK, then the subtree can be removed.</p>
+<p>- Naive Bayes prior: count(Volume class) / total training records.</p>
+<p>- Naive Bayes categorical probability: count(attribute value and class) / count(class), with Laplace smoothing if needed.</p>
+<p>- Naive Bayes continuous probability uses the Gaussian density formula with mean and sample standard deviation by class.</p>
+<br>
+<h2>Output Tables Created</h2>
+<p>- ID3 Class Distribution</p>
+<p>- ID3 Gain Calculations</p>
+<p>- ID3 Pre-Pruning Decisions</p>
+<p>- ID3 Post-Pruning Decisions</p>
+<p>- ID3 Final Metrics</p>
+</body>
+</html>

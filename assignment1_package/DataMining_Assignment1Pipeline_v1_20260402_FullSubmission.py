@@ -11,9 +11,12 @@ import numpy as np
 import pandas as pd
 
 
+BASE_DIR = Path(__file__).resolve().parent
+
+
 CONFIG = {
-    "input_csv": "/mnt/data/Assignment-1-Data.csv",
-    "output_dir": "/mnt/data/dm_assignment1_package",
+    "input_csv": BASE_DIR / "data" / "Assignment-1-Data.csv",
+    "output_dir": BASE_DIR / "outputs",
     "correlation_threshold": 0.70,
     "confidence_threshold": 0.70,
     "minimum_support_count": 17,

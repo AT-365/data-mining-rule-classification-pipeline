@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>Assignment 2 Defense Notes - ID3</title>
+<style>
+body { font-family: Georgia, 'Times New Roman', serif; margin: 36px; line-height: 1.5; color: #222; }
+h1 { color: #7a2f20; border-bottom: 3px solid #d9b7a8; padding-bottom: 8px; }
+h2 { background: #f5e7df; padding: 8px; border-left: 5px solid #b85742; }
+p { margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>Assignment 2 Defense Notes - ID3</h1>
+<br>
+<h2>Quick Setup</h2>
+<p>- Classifier Choice: ID3</p>
+<p>- Live Terminal Output: Yes</p>
+<p>- T1 Threshold: 0.8</p>
+<p>- g Parameter: 0.01</p>
+<p>- Training File: A2--ID3-Training set.csv</p>
+<p>- Test File: A2--ID3-TEST set.csv</p>
+<br>
+<h2>Who, What, When, Where, Why, How</h2>
+<p>- Who: DFCA wants a classifier for product order Volume.</p>
+<p>- What: ID3 creates a decision tree and IF-THEN rules.</p>
+<p>- When: The tree is built from the ID3 training set and tested against the ID3 test set.</p>
+<p>- Where: The logic runs in the Python pipeline; each calculation table is exported to Excel.</p>
+<p>- Why: ID3 gives readable rules, which helps explain why a Volume class was predicted.</p>
+<p>- How: The program calculates entropy, weighted entropy, information gain, pre-pruning alpha, post-pruning loss, and final predictions.</p>
+<p>- T1: User-chosen pre-pruning threshold. Higher T1 usually stops more branches early. Lower T1 usually allows deeper splitting.</p>
+<p>- g: User-chosen post-pruning parameter, valid range 0 &lt; g &lt;= 0.015. Higher g allows more pruning. Lower g allows less pruning.</p>
+<br>
+<h2>Formula Checklist</h2>
+<p>- Entropy/MC = -sum(p * log2(p)).</p>
+<p>- Gain = MC(D) - WMC(attribute).</p>
+<p>- ID3 alpha = c1 / |F1|.</p>
+<p>- ID3 post-pruning: if (N - M) / Q &lt;= gK, remove subtree.</p>
+<p>- Naive Bayes prior = count(class) / total records.</p>
+<p>- Laplace smoothing = (count + 1) / (class count + number of possible values).</p>
+<p>- Continuous probability = 1/(sqrt(2*pi)*std) * e^-((value-mean)^2/(2*std^2)).</p>
+</body>
+</html>

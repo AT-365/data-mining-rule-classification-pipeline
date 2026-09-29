@@ -39,7 +39,7 @@ CONFIG = {
     "data_dir": "data",
     "outputs_dir": "outputs",
     "reports_dir": "reports",
-    "private_notes_dir": "private_defense_notes",
+    "private_notes_dir": "defense_notes",
     "id3_train_csv": "A2--ID3-Training set.csv",
     "id3_test_csv": "A2--ID3-TEST set.csv",
     "bayes_train_csv": "A2--Bayes-Training set.csv",

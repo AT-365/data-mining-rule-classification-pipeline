@@ -1,0 +1,11 @@
+{
+  "Classifier":"ID3",
+  "Training Records":365,
+  "Test Records":44,
+  "T1 Threshold":0.8,
+  "g Parameter":0.01,
+  "Rules Before Post-Pruning":2,
+  "Rules After Post-Pruning":2,
+  "Final Accuracy Percent":47.7272727273,
+  "Run Completed At":"2026-09-28 21:24:46"
+}
